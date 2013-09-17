@@ -3,4 +3,10 @@
 require 'Peppermill'
 require 'daemons'
 
-Daemons.run(File.join(currentDir, '../lib/Peppermill.rb'))
+unless ARGV.length > 0
+    puts 'Needs more args
+    exit
+
+args = [ARGV.first, '-f', '--'] + ARGV.slice(1, ARGV.length)
+
+Daemons.run(File.join(currentDir, '../lib/Peppermill.rb'), :ARGV => args)
