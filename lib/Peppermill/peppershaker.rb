@@ -40,11 +40,11 @@ class Peppermill::PepperShaker
   private
 
   def build_hightower_link(champ_one_name, champ_two_name = nil)
-    champ_one =  @champions[champ_one_name.downcase.strip]
+    champ_one = get_champ_id(champ_one_name)
 
     if champ_two_name
-      champ_two = @champions[champ_two_name.downcase.strip]
-      link = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
+      champ_two = get_champ_id(champ_two_name)
+      link      = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
     else
       link = "http://apeppershaker.com/api/v1/s/c/#{champ_one}"
     end
@@ -57,7 +57,7 @@ class Peppermill::PepperShaker
     champ_two_name = champ_two_name.downcase.strip
     fight_string   = ''
     rematch_string = nil
-    fight_obj      = retrieve_fight(champ_one_name, champ_two_name)
+    fight_obj      = retrieve_fight(get_champ_id(champ_one_name), get_champ_id(champ_two_name))
     if fight_obj['left']==nil
       fight_string += name_not_found(champ_one_name)
     else
@@ -98,7 +98,7 @@ class Peppermill::PepperShaker
     name  = name.downcase.strip
     reply = name_not_found(name)
 
-    champ_id = @champions[name]
+    champ_id = get_champ_id(name)
     if champ_id
       reply = parse_champ(retrieve_champ(champ_id))
     end
@@ -135,8 +135,25 @@ class Peppermill::PepperShaker
     colored_elo
   end
 
-  def retrieve_fight(name_one, name_two)
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/show/by_name/#{URI.escape(name_one)}/#{URI.escape(name_two)}")
+  def get_champ_id(name)
+    name            = name.downcase.strip
+    name_apostrophe = name.gsub(/ /, '\'')
+    name_underscore = name.gsub(/ /, '_')
+    id              = nil
+
+    if @champions[name]
+      id = @champions[name]
+    elsif @champions[name_apostrophe]
+      id = @champions[name_apostrophe]
+    elsif @champions[name_underscore]
+      id = @champions[name_underscore]
+    end
+
+    id
+  end
+
+  def retrieve_fight(id_one, id_two)
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/show/by_id/#{id_one}/#{id_two}")
   end
 
   def retrieve_champ(id)
