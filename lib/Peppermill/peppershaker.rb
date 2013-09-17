@@ -92,7 +92,7 @@ class Peppermill::PepperShaker
     elsif wins == 0
       winrate = 0
     else
-      winrate = ((wins/(losses+wins)).to_f*100).round(3)
+      winrate = ((wins/(losses+wins)).to_f*100).round(1)
     end
 
     winrate
