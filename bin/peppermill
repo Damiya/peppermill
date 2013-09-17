@@ -4,8 +4,8 @@ require 'Peppermill'
 require 'daemons'
 
 unless ARGV.length > 0
-    puts 'Needs more args
-    exit
+  puts 'Needs more args'
+  exit
 end
 
 args = [ARGV.first, '-f', '--'] + ARGV.slice(1, ARGV.length)
