@@ -5,11 +5,11 @@ require 'rest_client'
 require 'daemons'
 class Peppermill::PepperShaker
   include Cinch::Plugin
-  match /^\?s ([\w\s\d\.\(\)]+),([\w\s\d\.\(\)]+)$/, {
+  match /^\?s ([\w\s\d\.\(\)']+),([\w\s\d\.\(\)']+)$/, {
       :use_prefix => false,
       :method     => :lookup_multi
   }
-  match /^\?s ([\w\s\d\.\(\)]+)$/, {
+  match /^\?s ([\w\s\d\.\(\)']+)$/, {
       :use_prefix => false,
       :method     => :lookup_single
   }
@@ -67,14 +67,14 @@ class Peppermill::PepperShaker
     colored_elo = ''
     elo         = obj['elo']
 
-    if elo < -200
-      colored_elo = Format(:bold, :red, elo.to_s)
-    elsif elo >= -200 && elo < 0
+    if elo < -400
+      colored_elo = Format(:brown, :bold, elo.to_s)
+    elsif elo >= -400 && elo < -100
       colored_elo = Format(:red, elo.to_s)
-    elsif elo >= 0 && elo < 200
+    elsif elo >= -100 && elo < 100
+      colored_elo = Format(:blue, elo.to_s)
+    elsif elo >= 100
       colored_elo = Format(:green, elo.to_s)
-    elsif elo >= 200
-      colored_elo = Format(:bold, :green, elo.to_s)
     end
 
     colored_elo
