@@ -5,11 +5,11 @@ require 'rest_client'
 require 'daemons'
 class Peppermill::PepperShaker
   include Cinch::Plugin
-  match /^\?s ([\w\s\d]+),([\w\s\d]+)$/, {
+  match /^\?s ([\w\s\d\.]+),([\w\s\d\.]+)$/, {
       :use_prefix => false,
       :method     => :lookup_multi
   }
-  match /^\?s ([\w\s\d]+)$/, {
+  match /^\?s ([\w\s\d\.]+)$/, {
       :use_prefix => false,
       :method     => :lookup_single
   }
@@ -21,7 +21,7 @@ class Peppermill::PepperShaker
   end
 
   def lookup_single(message, name)
-    reply = lookup_champ(name)
+    reply          = lookup_champ(name)
     hightower_link = build_hightower_link(name, nil)
     message.reply("#{reply} | Hightower: #{Format(:bold, hightower_link)}")
   end
@@ -85,7 +85,17 @@ class Peppermill::PepperShaker
   end
 
   def get_winrate(champ)
-    (champ['losses'].to_f/champ['wins'].to_f).round(3)*100
+    losses = champ['losses'].to_f
+    wins   = champ['wins'].to_f
+    if losses == 0 && wins > 0
+      winrate = 100
+    elsif wins == 0
+      winrate = 0
+    else
+      winrate = (losses/wins).round(3)*100
+    end
+
+    winrate
   end
 
 end
