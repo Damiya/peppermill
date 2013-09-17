@@ -12,7 +12,7 @@ module Peppermill
         c.user            = 'Peppermill'
         c.nick            = 'Peppermill'
         c.server          = 'irc.synirc.net'
-        c.channels        = %w(#saltybettest)
+        c.channels        = %w(#saltybet)
         c.plugins.plugins = [Peppermill::PepperShaker, Peppermill::Admin]
       end
 
