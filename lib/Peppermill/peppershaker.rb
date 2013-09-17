@@ -72,9 +72,9 @@ class Peppermill::PepperShaker
     elsif elo >= 300 && elo < 500
       colored_elo = Format(:orange, :bold, elo.to_s)
     elsif elo >= 500 && elo < 700
-      colored_elo = Format(:royal, :bold, elo.to_s)
-    elsif elo >= 700
       colored_elo = Format(:green, :bold, elo.to_s)
+    elsif elo >= 700
+      colored_elo = Format(:lime, :bold, elo.to_s)
     end
 
     colored_elo
