@@ -40,13 +40,16 @@ class Peppermill::PepperShaker
   private
 
   def build_hightower_link(champ_one_name, champ_two_name = nil)
-    link = 'http://fightmoney.herokuapp.com/stats/#/' + champ_one_name.downcase.strip
+    champ_one =  @champions[champ_one_name.downcase.strip]
 
     if champ_two_name
-      link += '/' + champ_two_name.downcase.strip
+      champ_two = @champions[champ_two_name.downcase.strip]
+      link = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
+    else
+      link = "http://apeppershaker.com/api/v1/s/c/#{champ_one}"
     end
 
-    ShortURL.shorten(link, :tinyurl)
+    link
   end
 
   def lookup_fight(champ_one_name, champ_two_name)
