@@ -24,13 +24,20 @@ class Peppermill::PepperShaker
   def lookup_single(message, name)
     reply          = lookup_champ(name)
     hightower_link = build_hightower_link(name, nil)
-    message.reply("#{reply} | HT: #{Format(:bold, hightower_link)}")
+
+    if hightower_link
+      reply += " | HT: #{Format(:bold, hightower_link)}"
+    end
+    message.reply("#{reply}")
   end
 
   def lookup_multi(message, champ_one_name, champ_two_name)
-    fight_string, rematch_string = lookup_fight(champ_one_name, champ_two_name)
+    reply, rematch_string = lookup_fight(champ_one_name, champ_two_name)
     hightower_link               = build_hightower_link(champ_one_name, champ_two_name)
-    message.reply("#{fight_string} | HT: #{Format(:bold, hightower_link)}")
+    if hightower_link
+      reply += " | HT: #{Format(:bold, hightower_link)}"
+    end
+    message.reply("#{reply}")
 
     if rematch_string
       message.reply(rematch_string)
@@ -42,9 +49,15 @@ class Peppermill::PepperShaker
   def build_hightower_link(champ_one_name, champ_two_name = nil)
     champ_one = get_champ_id(champ_one_name)
 
+    if champ_one == nil
+      return nil
+    end
+
     if champ_two_name
       champ_two = get_champ_id(champ_two_name)
-      link      = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
+      if champ_two
+        link = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
+      end
     else
       link = "http://apeppershaker.com/api/v1/s/c/#{champ_one}"
     end
@@ -153,6 +166,14 @@ class Peppermill::PepperShaker
   end
 
   def retrieve_fight(id_one, id_two)
+    if !id_one
+      id_one = 99999
+    end
+
+    if !id_two
+      id_two = 99999
+    end
+
     JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/show/by_id/#{id_one}/#{id_two}")
   end
 
