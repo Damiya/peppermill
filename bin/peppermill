@@ -1,13 +1,75 @@
 #!/usr/bin/env ruby
+#Based largely on Cinchize by  Victor Bergöö
 
-require 'Peppermill'
-require 'daemons'
+require 'dotenv'
+require File.expand_path('../../lib/Peppermill', __FILE__)
 
-unless ARGV.length > 0
-  puts 'Needs more args'
-  exit
+require 'optparse'
+
+Dotenv.load!
+
+Options = {
+  :ontop => true,
+  :system => false,
+  :local_config => '.peppermill', #File.join(ENV[HOME], '.peppermill'),
+  :action => nil,
+}
+
+options = Options.dup
+
+ARGV.options do |o|
+  o.set_summary_indent ' '
+  o.banner = "Usage: #{File.basename $0} [Options] network"
+
+  o.on("-d", "--daemonize", "Daemonize") {
+    options[:ontop] = false
+  }
+
+  o.on("-r", "--running", "Show status for all bots") {
+    options[:action] = :show_running
+  }
+
+  o.on("--start", "Start the bot") {
+    options[:action] = :start
+  }
+
+  o.on("--status", "Status of the bot") {
+    options[:action] = :status
+  }
+
+  o.on("--stop", "Stop the bot") {
+    options[:action] = :stop
+  }
+
+  o.on("--restart", "Restart the bot") {
+    options[:action] = :restart
+  }
+
+  o.parse!
 end
 
-args = [ARGV.first, '-f', '--'] + ARGV.slice(1, ARGV.length)
+begin
+  if options[:action] == :show_running
+    config_file = options[:system] ? options[:system_config]: options[:local_config]
 
-Daemons.run(File.join(currentDir, '../lib/Peppermill.rb'), :ARGV => args)
+    raise ArgumentError.new "no such file: #{config_file}" unless File.exists? config_file
+    cfg = YAML.load_file config_file
+
+    raise ArgumentError.new "#{config_file} doesn't seem to be a YaML file" unless cfg
+    raise ArgumentError.new "cinchize isn't configured correctly, please recheck #{config_file}" unless cfg.key? "servers"
+    raise ArgumentError.new "there's no networks configured, please recheck #{config_file}" unless cfg["servers"]
+    cfg["servers"].keys.sort.each do |key|
+      daemon = Peppermill::Peppermill.new *Peppermill.config(options, key)
+      daemon.status
+    end
+  else
+    daemon = Peppermill::Peppermill.new *Peppermill.config(options, ARGV.first)
+    daemon.send options[:action]
+  end
+rescue NoMethodError => e
+  puts "Error: no such method"
+  exit 1
+rescue ArgumentError => e
+  puts "Error: #{e}"
+  exit 1
+end

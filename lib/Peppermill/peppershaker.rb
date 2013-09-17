@@ -1,9 +1,7 @@
 require 'cinch'
 require 'json'
-require 'shorturl'
-require 'uri/common'
 require 'rest_client'
-require 'daemons'
+
 class Peppermill::PepperShaker
   include Cinch::Plugin
   match /^\?s ([\w\s\d\.\(\)'\-_&\+:]+),([\+\w\s\d\.\(\)'\/\-_&:]+)$/, {
