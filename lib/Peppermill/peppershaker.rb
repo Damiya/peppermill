@@ -68,13 +68,13 @@ class Peppermill::PepperShaker
     elo         = obj['elo']
 
     if elo < -400
-      colored_elo = Format(:brown, :bold, elo.to_s)
+      colored_elo = Format(:red, :bold, elo.to_s)
     elsif elo >= -400 && elo < -100
-      colored_elo = Format(:red, elo.to_s)
+      colored_elo = Format(:orange, :bold, elo.to_s)
     elsif elo >= -100 && elo < 100
-      colored_elo = Format(:blue, elo.to_s)
+      colored_elo = Format(:royal, :bold, elo.to_s)
     elsif elo >= 100
-      colored_elo = Format(:green, elo.to_s)
+      colored_elo = Format(:green, :bold, elo.to_s)
     end
 
     colored_elo
@@ -92,7 +92,7 @@ class Peppermill::PepperShaker
     elsif wins == 0
       winrate = 0
     else
-      winrate = (wins/(losses+wins)).round(3)*100
+      winrate = (wins/(losses+wins)).to_f.round(3)*100
     end
 
     winrate
