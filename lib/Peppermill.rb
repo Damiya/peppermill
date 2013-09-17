@@ -16,8 +16,6 @@ bot = Cinch::Bot.new do
 
   on :connect do |m|
     User('nickserv').send("identify #{ENV['PASSWORD']}")
-
-    unset_mode 'x'
   end
 end
 

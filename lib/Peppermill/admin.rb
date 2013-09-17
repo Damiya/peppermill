@@ -11,6 +11,12 @@ class Peppermill::Admin
     @admins = %w(Damiya!~damiya@a.gay.wizard.irl)
   end
 
+  def disable_x(m)
+    return unless check_user(m.prefix)
+
+    bot.unset_mode('x')
+  end
+
   def check_user(prefix)
     @admins.include?prefix
   end
