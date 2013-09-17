@@ -1,6 +1,7 @@
 require 'cinch'
 require 'json'
 require 'shorturl'
+require 'uri/common'
 require 'rest_client'
 require 'daemons'
 class Peppermill::PepperShaker
@@ -27,11 +28,16 @@ class Peppermill::PepperShaker
   end
 
   def lookup_multi(message, champ_one_name, champ_two_name)
-    champ_one_string = lookup_champ(champ_one_name)
-    champ_two_string = lookup_champ(champ_two_name)
-    hightower_link   = build_hightower_link(champ_one_name, champ_two_name)
-    message.reply("#{champ_one_string} | #{champ_two_string} | Hightower: #{Format(:bold, hightower_link)}")
+    fight_string, rematch_string = lookup_fight(champ_one_name, champ_two_name)
+    hightower_link               = build_hightower_link(champ_one_name, champ_two_name)
+    message.reply("#{fight_string} | Hightower: #{Format(:bold, hightower_link)}")
+
+    if rematch_string != ''
+      message.reply(rematch_string)
+    end
   end
+
+  private
 
   def build_hightower_link(champ_one_name, champ_two_name = nil)
     link = 'http://fightmoney.herokuapp.com/stats/#/' + champ_one_name.downcase.strip
@@ -42,21 +48,66 @@ class Peppermill::PepperShaker
     ShortURL.shorten(link, :tinyurl)
   end
 
-  private
+  def lookup_fight(champ_one_name, champ_two_name)
+    champ_one_name = champ_one_name.downcase.strip
+    champ_two_name = champ_two_name.downcase.strip
+    fight_string   = ''
+    rematch_string = ''
+    fight_obj      = retrieve_fight(champ_one_name, champ_two_name)
+    if fight_obj['left']==nil
+      fight_string += name_not_found(champ_one_name)
+    else
+      fight_string += parse_champ(fight_obj['left'])
+    end
+    fight_string += ' | '
+    if fight_obj['right']==nil
+      fight_string += name_not_found(champ_two_name)
+    else
+      fight_string += parse_champ(fight_obj['right'])
+    end
+
+    if fight_obj['rematch']
+      rematch_string = parse_rematch(fight_obj['rematch'], champ_one_name, champ_two_name)
+    end
+
+    return fight_string, rematch_string
+  end
+
+  def parse_rematch(rematch_obj, champ_one_name, champ_two_name)
+    rematch_string = Format(:bold, 'Rematch! ')
+    if rematch_obj['left_has_won'] && rematch_obj['right_has_won']
+      rematch_string += Format(:bold, :red, champ_one_name) + ' and ' +
+          Format(:bold, :red, champ_two_name) + ' have both beaten the other.'
+    elsif rematch_obj['left_has_won']
+      rematch_string += Format(:bold, :green, champ_one_name) + ' has beaten ' +
+          Format(:bold, :red, champ_two_name)
+    elsif rematch_obj['right_has_won']
+      rematch_string += Format(:bold, :green, champ_two_name) + ' has beaten ' +
+          Format(:bold, :red, champ_one_name)
+    end
+
+    rematch_string
+  end
+
+
   def lookup_champ(name)
     name  = name.downcase.strip
-    reply = Format(:bold, "#{name} was not found in the database. Check your spelling!")
+    reply = name_not_found(name)
 
     champ_id = @champions[name]
     if champ_id
-      champ_obj = retrieve_champ(champ_id)
-      winrate   = get_winrate(champ_obj)
-      reply     = Format(:bold, "#{champ_obj['name']}") + ': [E: ' + color_elo(champ_obj) +
-          '] [' + Format(:bold, :green, "#{champ_obj['wins']}") + 'W/' + Format(:bold, :red, "#{champ_obj['losses']}") + 'L] (' +
-          Format(:bold, "#{winrate}%") + ' out of ' + Format(:bold, "#{get_total_matches(champ_obj)}") + ')'
+      reply = parse_champ(retrieve_champ(champ_id))
     end
 
     reply
+  end
+
+  def parse_champ(champ_obj)
+    winrate = get_winrate(champ_obj)
+    Format(:bold, "#{champ_obj['name']}") + ': [E: ' + color_elo(champ_obj) +
+        '] [' + Format(:bold, :green, "#{champ_obj['wins']}") + 'W/' + Format(:bold, :red, "#{champ_obj['losses']}") + 'L] (' +
+        Format(:bold, "#{winrate}%") + ' out of ' + Format(:bold, "#{get_total_matches(champ_obj)}") + ')'
+
   end
 
   def get_total_matches(obj)
@@ -80,6 +131,10 @@ class Peppermill::PepperShaker
     colored_elo
   end
 
+  def retrieve_fight(name_one, name_two)
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/show/by_name/#{URI.escape(name_one)}/#{URI.escape(name_two)}")
+  end
+
   def retrieve_champ(id)
     JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/champion/show/by_id/#{id}")
   end
@@ -96,6 +151,10 @@ class Peppermill::PepperShaker
     end
 
     winrate
+  end
+
+  def name_not_found(name)
+    Format(:bold, "#{name}") + ' was not found in the database. Check your spelling!'
   end
 
 end
