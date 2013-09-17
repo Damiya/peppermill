@@ -24,13 +24,13 @@ class Peppermill::PepperShaker
   def lookup_single(message, name)
     reply          = lookup_champ(name)
     hightower_link = build_hightower_link(name, nil)
-    message.reply("#{reply} | Hightower: #{Format(:bold, hightower_link)}")
+    message.reply("#{reply} | HT: #{Format(:bold, hightower_link)}")
   end
 
   def lookup_multi(message, champ_one_name, champ_two_name)
     fight_string, rematch_string = lookup_fight(champ_one_name, champ_two_name)
     hightower_link               = build_hightower_link(champ_one_name, champ_two_name)
-    message.reply("#{fight_string} | Hightower: #{Format(:bold, hightower_link)}")
+    message.reply("#{fight_string} | HT: #{Format(:bold, hightower_link)}")
 
     if rematch_string != ''
       message.reply(rematch_string)
@@ -45,6 +45,7 @@ class Peppermill::PepperShaker
     if champ_two_name
       link += '/' + champ_two_name.downcase.strip
     end
+
     ShortURL.shorten(link, :bitly)
   end
 
