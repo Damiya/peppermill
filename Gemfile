@@ -11,4 +11,6 @@ gem 'dotenv'
 
 gem 'rest-client'
 
+gem 'daemons'
+
 gem 'shorturl'
