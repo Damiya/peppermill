@@ -45,7 +45,7 @@ class Peppermill::PepperShaker
     if champ_two_name
       link += '/' + champ_two_name.downcase.strip
     end
-    ShortURL.shorten(link, :tinyurl)
+    ShortURL.shorten(link, :bitly)
   end
 
   def lookup_fight(champ_one_name, champ_two_name)
