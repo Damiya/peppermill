@@ -21,6 +21,7 @@ class Peppermill::PepperShaker
 
   def lookup_single(message, name)
     reply = lookup_champ(name)
+    hightower_link = build_hightower_link(name, nil)
     message.reply("#{reply} | Hightower: #{Format(:bold, hightower_link)}")
   end
 
