@@ -6,11 +6,11 @@ require 'rest_client'
 require 'daemons'
 class Peppermill::PepperShaker
   include Cinch::Plugin
-  match /^\?s ([\w\s\d\.\(\)'\-_&\+]+),([\+\w\s\d\.\(\)'\/\-_&]+)$/, {
+  match /^\?s ([\w\s\d\.\(\)'\-_&\+:]+),([\+\w\s\d\.\(\)'\/\-_&:]+)$/, {
       :use_prefix => false,
       :method     => :lookup_multi
   }
-  match /^\?s ([\w\s\d\.\(\)'\-_&\+]+)$/, {
+  match /^\?s ([\w\s\d\.\(\)'\-_&\+:]+)$/, {
       :use_prefix => false,
       :method     => :lookup_single
   }
