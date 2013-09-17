@@ -32,7 +32,7 @@ class Peppermill::PepperShaker
     hightower_link               = build_hightower_link(champ_one_name, champ_two_name)
     message.reply("#{fight_string} | HT: #{Format(:bold, hightower_link)}")
 
-    if rematch_string != ''
+    if rematch_string
       message.reply(rematch_string)
     end
   end
@@ -46,14 +46,14 @@ class Peppermill::PepperShaker
       link += '/' + champ_two_name.downcase.strip
     end
 
-    ShortURL.shorten(link, :bitly)
+    ShortURL.shorten(link, :tinyurl)
   end
 
   def lookup_fight(champ_one_name, champ_two_name)
     champ_one_name = champ_one_name.downcase.strip
     champ_two_name = champ_two_name.downcase.strip
     fight_string   = ''
-    rematch_string = ''
+    rematch_string = nil
     fight_obj      = retrieve_fight(champ_one_name, champ_two_name)
     if fight_obj['left']==nil
       fight_string += name_not_found(champ_one_name)
