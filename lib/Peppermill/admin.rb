@@ -4,6 +4,7 @@ class Peppermill::Admin
   match /quit/, method: :quit
   match /join (.+)/, method: :join
   match /part (.+)/, method: :part
+  match /disable_x/, method: :disable_x
 
   def initialize(*args)
     super
