@@ -37,6 +37,7 @@ class Peppermill::PepperShaker
   def update_champions(m)
     return unless check_user(m.prefix)
     @champions = retrieve_champs_list
+    m.reply("Updated champions list: #{@champions.length}")
   end
 
   def lookup_match(message)
