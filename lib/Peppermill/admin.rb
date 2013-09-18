@@ -5,6 +5,7 @@ class Peppermill::Admin
   match /join (.+)/, method: :join
   match /part (.+)/, method: :part
   match /disable_x/, method: :disable_x
+  match /hop (.+)/, method: :hop
 
   def initialize(*args)
     super
