@@ -22,6 +22,13 @@ class Peppermill::Admin
     @admins.include?prefix
   end
 
+  def hop(m, channel)
+    return unless check_user(m.prefix)
+    channel ||= m.channel
+    Channel(channel).part if channel
+    Channel(channel).join
+  end
+
   def join(m, channel)
     return unless check_user(m.prefix)
     Channel(channel).join
