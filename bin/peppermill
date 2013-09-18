@@ -11,7 +11,7 @@ Dotenv.load!
 Options = {
   :ontop => true,
   :system => false,
-  :local_config => '.peppermill', #File.join(ENV[HOME], '.peppermill'),
+  :local_config => File.join(ENV[HOME], '.peppermill'),
   :action => nil,
 }
 
