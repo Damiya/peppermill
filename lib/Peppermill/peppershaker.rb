@@ -86,10 +86,10 @@ class Peppermill::PepperShaker
     if champ_two_name
       champ_two = get_champ_id(champ_two_name)
       if champ_two
-        link = "http://apeppershaker.com/api/v1/s/f/#{champ_one}/#{champ_two}"
+        link = "http://apeppershaker.com/api/v1/f/#{champ_one}/#{champ_two}"
       end
     else
-      link = "http://apeppershaker.com/api/v1/s/c/#{champ_one}"
+      link = "http://apeppershaker.com/api/v1/c/#{champ_one}"
     end
 
     link
@@ -204,11 +204,11 @@ class Peppermill::PepperShaker
       id_two = 99999
     end
 
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/show/by_id/#{id_one}/#{id_two}")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/by_id/#{id_one}/#{id_two}")
   end
 
   def retrieve_champ(id)
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/champion/show/by_id/#{id}")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/champion/#{id}")
   end
 
   def retrieve_champs_list
