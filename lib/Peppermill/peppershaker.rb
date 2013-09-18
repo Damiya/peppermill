@@ -13,10 +13,20 @@ class Peppermill::PepperShaker
       :method     => :lookup_single
   }
 
+  match /\?stats/, {
+      :use_prefix => false,
+      :method     => :lookup_match
+  }
+
   def initialize(*args)
     super
 
-    @champions = JSON.parse(RestClient.get 'http://apeppershaker.com/api/v1/champion/list')
+    @champions = retrieve_champs_list
+  end
+
+  def lookup_match(message)
+    secret_sauce = get_the_secret_sauce
+    lookup_multi(message, secret_sauce['player1name'], secret_sauce['player2name'])
   end
 
   def lookup_single(message, name)
@@ -31,7 +41,7 @@ class Peppermill::PepperShaker
 
   def lookup_multi(message, champ_one_name, champ_two_name)
     reply, rematch_string = lookup_fight(champ_one_name, champ_two_name)
-    hightower_link               = build_hightower_link(champ_one_name, champ_two_name)
+    hightower_link        = build_hightower_link(champ_one_name, champ_two_name)
     if hightower_link
       reply += " | HT: #{Format(:bold, hightower_link)}"
     end
@@ -46,6 +56,7 @@ class Peppermill::PepperShaker
 
   def build_hightower_link(champ_one_name, champ_two_name = nil)
     champ_one = get_champ_id(champ_one_name)
+    link = nil
 
     if champ_one == nil
       return nil
@@ -177,6 +188,14 @@ class Peppermill::PepperShaker
 
   def retrieve_champ(id)
     JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/champion/show/by_id/#{id}")
+  end
+
+  def retrieve_champs_list
+    JSON.parse(RestClient.get 'http://apeppershaker.com/api/v1/champion/list')
+  end
+
+  def get_the_secret_sauce
+    JSON.parse(RestClient.get ENV['SECRET_SAUCE'])
   end
 
   def get_winrate(champ)

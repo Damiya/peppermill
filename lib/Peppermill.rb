@@ -80,7 +80,7 @@ module Peppermill
       app.start
 
       network        = _sym_hash(@network)
-      plugins        = [Peppermill::PepperShaker, Peppermill::Admin]
+      plugins        = [PepperShaker, Admin]
 
       loop do
         bot = Cinch::Bot.new do
