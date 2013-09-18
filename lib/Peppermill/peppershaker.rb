@@ -13,7 +13,7 @@ class Peppermill::PepperShaker
       :method     => :lookup_single
   }
 
-  match /\?stats/, {
+  match /^\?stats$/, {
       :use_prefix => false,
       :method     => :lookup_match
   }
