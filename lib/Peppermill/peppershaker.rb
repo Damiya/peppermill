@@ -18,9 +18,24 @@ class Peppermill::PepperShaker
       :method     => :lookup_match
   }
 
+  match /^\!update_champions$/,{
+      :use_prefix => false,
+      :method     => :update_champions
+  }
+
   def initialize(*args)
     super
 
+    @champions = retrieve_champs_list
+    @admins = %w(Damiya!~damiya@a.gay.wizard.irl)
+  end
+
+  def check_user(prefix)
+    @admins.include?prefix
+  end
+
+  def update_champions(m)
+    return unless check_user(m.prefix)
     @champions = retrieve_champs_list
   end
 
