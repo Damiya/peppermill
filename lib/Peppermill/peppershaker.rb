@@ -14,9 +14,14 @@ class Peppermill::PepperShaker
       :method     => :lookup_single
   }
 
-  match /^\!update_champions$/,{
+  match /^!update_champions$/,{
       :use_prefix => false,
       :method     => :update_champions
+  }
+
+  match /^`s$/,{
+      :use_prefix => false,
+      :method     => :lookup_match
   }
 
   def initialize(*args)
