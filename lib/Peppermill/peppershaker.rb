@@ -174,7 +174,7 @@ class Peppermill::PepperShaker
     elsif elo >= 700 && elo < 850
       colored_elo = Format(:lime, :bold, elo.to_s)
     elsif elo >= 850
-      colored_elo = Format(:lime, :bold, :underline, '**'+elo.to_s+'**')
+      colored_elo = Format(:lime, :bold, :underline, '$$'+elo.to_s+'$$')
     end
 
     colored_elo
