@@ -163,16 +163,18 @@ class Peppermill::PepperShaker
 
   def color_elo(obj)
     colored_elo = ''
-    elo         = obj['elo']
+    elo         = obj['elo'].to_s
 
     if elo < 300
-      colored_elo = Format(:red, :bold, elo.to_s)
+      colored_elo = Format(:red, :bold, elo)
     elsif elo >= 300 && elo < 500
-      colored_elo = Format(:orange, :bold, elo.to_s)
+      colored_elo = Format(:orange, :bold, elo)
     elsif elo >= 500 && elo < 700
-      colored_elo = Format(:green, :bold, elo.to_s)
-    elsif elo >= 700
-      colored_elo = Format(:lime, :bold, elo.to_s)
+      colored_elo = Format(:green, :bold, elo)
+    elsif elo >= 700 && elo < 850
+      colored_elo = Format(:lime, :bold, elo)
+    elsif elo >= 850
+      colored_elo = Format(:lime, :red, :bold, :underline, '**'+elo+'**')
     end
 
     colored_elo
