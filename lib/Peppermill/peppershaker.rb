@@ -1,6 +1,7 @@
 require 'cinch'
 require 'json'
 require 'rest_client'
+require 'bunny'
 
 class Peppermill::PepperShaker
   include Cinch::Plugin
@@ -31,8 +32,23 @@ class Peppermill::PepperShaker
   def initialize(*args)
     super
 
+    conn = Bunny.new
+    conn.start
+    @ch = conn.create_channel
+    @queue = @ch.queue('com.itsdamiya.tradecaravan.update_stats', :auto_delete => true)
+    @exchange = @ch.default_exchange
+    @queue.subscribe do |delivery_info, metadata, payload|
+      update_stats_received(delivery_info, metadata, payload)
+    end
+
     @champions = retrieve_champs_list
     @admins = %w(Damiya!~damiya@a.gay.wizard.irl)
+  end
+
+  def update_stats_received(delivery_info, metadata, payload)
+    return unless payload=='WEBSOCKET_UPDATED'
+
+    status = retrieve_fight_ajax
   end
 
   def check_user(prefix)
@@ -207,6 +223,10 @@ class Peppermill::PepperShaker
     end
 
     JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/by_id/#{id_one}/#{id_two}")
+  end
+
+  def retrieve_fight_ajax
+    JSON.parse(RestClient.get 'http://www.saltybet.com/state.json')
   end
 
   def retrieve_champ(id)
