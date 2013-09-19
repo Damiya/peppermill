@@ -14,19 +14,9 @@ class Peppermill::PepperShaker
       :method     => :lookup_single
   }
 
-  match /^\?stats$/, {
-      :use_prefix => false,
-      :method     => :lookup_match
-  }
-
   match /^\!update_champions$/,{
       :use_prefix => false,
       :method     => :update_champions
-  }
-
-  match /^\`s$/, {
-      :use_prefix => false,
-      :method     => :lookup_match
   }
 
   def initialize(*args)
@@ -48,8 +38,19 @@ class Peppermill::PepperShaker
   def update_stats_received(delivery_info, metadata, payload)
     return unless payload=='WEBSOCKET_UPDATED'
 
-    Channel('#saltybet').msg('hey nerds I got a message')
-    status = retrieve_fight_ajax
+    data = retrieve_fight_ajax
+
+    return unless data['status']=='open'
+
+    secret_sauce = get_the_secret_sauce
+    match_message, rematch_message = build_multi_message(secret_sauce['player1name'], secret_sauce['player2name'])
+
+    channel = Channel('#saltybet')
+    channel.msg(match_message)
+
+    if rematch_message
+      channel.msg(rematch_message)
+    end
   end
 
   def check_user(prefix)
@@ -62,11 +63,6 @@ class Peppermill::PepperShaker
     m.reply("Updated champions list: #{@champions.length}")
   end
 
-  def lookup_match(message)
-    secret_sauce = get_the_secret_sauce
-    lookup_multi(message, secret_sauce['player1name'], secret_sauce['player2name'])
-  end
-
   def lookup_single(message, name)
     reply          = lookup_champ(name)
     hightower_link = build_hightower_link(name, nil)
@@ -77,17 +73,28 @@ class Peppermill::PepperShaker
     message.reply("#{reply}")
   end
 
+  def lookup_match(message)
+    secret_sauce = get_the_secret_sauce
+    lookup_multi(message,secret_sauce['player1name'],secret_sauce['player2name'])
+  end
+
   def lookup_multi(message, champ_one_name, champ_two_name)
-    reply, rematch_string = lookup_fight(champ_one_name, champ_two_name)
-    hightower_link        = build_hightower_link(champ_one_name, champ_two_name)
-    if hightower_link
-      reply += " | HT: #{Format(:bold, hightower_link)}"
-    end
+    reply, rematch_string = build_multi_message(champ_one_name, champ_two_name)
     message.reply("#{reply}")
 
     if rematch_string
       message.reply(rematch_string)
     end
+  end
+
+  def build_multi_message(champ_one_name, champ_two_name)
+    reply, rematch_string = lookup_fight(champ_one_name, champ_two_name)
+    hightower_link        = build_hightower_link(champ_one_name, champ_two_name)
+    if hightower_link
+      reply += " | HT: #{Format(:bold, hightower_link)}"
+    end
+
+    return reply, rematch_string
   end
 
   private
