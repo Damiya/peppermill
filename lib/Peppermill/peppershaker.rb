@@ -48,6 +48,7 @@ class Peppermill::PepperShaker
   def update_stats_received(delivery_info, metadata, payload)
     return unless payload=='WEBSOCKET_UPDATED'
 
+    Channel('#saltybet').msg('hey nerds I got a message')
     status = retrieve_fight_ajax
   end
 
