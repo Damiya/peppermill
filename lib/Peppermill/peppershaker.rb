@@ -78,6 +78,7 @@ class Peppermill::PepperShaker
     message.reply("#{reply}")
   end
 
+  #TODO: Refactor this with the new websocket. Needs more DRY
   def lookup_match(message)
     secret_sauce = get_the_secret_sauce
     lookup_multi(message,secret_sauce['player1name'],secret_sauce['player2name'])
