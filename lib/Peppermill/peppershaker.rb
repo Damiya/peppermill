@@ -236,7 +236,7 @@ class Peppermill::PepperShaker
       id_two = 99999
     end
 
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/fight/by_id/#{id_one}/#{id_two}")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/fights/by_id/#{id_one}/#{id_two}")
   end
 
   def retrieve_fight_ajax
@@ -244,11 +244,11 @@ class Peppermill::PepperShaker
   end
 
   def retrieve_champ(id)
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/champion/#{id}.json")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/champions/#{id}.json")
   end
 
   def retrieve_champs_list
-    JSON.parse(RestClient.get 'http://apeppershaker.com/api/champion/list')
+    JSON.parse(RestClient.get 'http://apeppershaker.com/api/champions/list')
   end
 
   def get_the_secret_sauce
