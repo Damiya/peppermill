@@ -19,10 +19,10 @@ class Peppermill::PepperShaker
       :method     => :update_champions
   }
 
-  #match /^`s$/,{
-  #    :use_prefix => false,
-  #    :method     => :lookup_match
-  #}
+  match /^`s$/,{
+      :use_prefix => false,
+      :method     => :lookup_match
+  }
 
   def initialize(*args)
     super
