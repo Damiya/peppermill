@@ -116,10 +116,10 @@ class Peppermill::PepperShaker
     if champ_two_name
       champ_two = get_champ_id(champ_two_name)
       if champ_two
-        link = "http://apeppershaker.com/api/v1/f/#{champ_one}/#{champ_two}"
+        link = "http://apeppershaker.com/api/f/#{champ_one}/#{champ_two}"
       end
     else
-      link = "http://apeppershaker.com/api/v1/c/#{champ_one}"
+      link = "http://apeppershaker.com/api/c/#{champ_one}"
     end
 
     link
@@ -236,7 +236,7 @@ class Peppermill::PepperShaker
       id_two = 99999
     end
 
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/fight/by_id/#{id_one}/#{id_two}")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/fight/by_id/#{id_one}/#{id_two}")
   end
 
   def retrieve_fight_ajax
@@ -244,11 +244,11 @@ class Peppermill::PepperShaker
   end
 
   def retrieve_champ(id)
-    JSON.parse(RestClient.get "http://apeppershaker.com/api/v1/champion/#{id}")
+    JSON.parse(RestClient.get "http://apeppershaker.com/api/champion/#{id}.json")
   end
 
   def retrieve_champs_list
-    JSON.parse(RestClient.get 'http://apeppershaker.com/api/v1/champion/list')
+    JSON.parse(RestClient.get 'http://apeppershaker.com/api/champion/list')
   end
 
   def get_the_secret_sauce
