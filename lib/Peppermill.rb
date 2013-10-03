@@ -109,7 +109,6 @@ module Peppermill
       puts "* stopping #{clean_app_name}"
 
       Process.kill("QUIT", pidfile.pid)
-      File.delete(pidfile.filename)
     end
 
     def status
